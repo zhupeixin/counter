@@ -1,12 +1,12 @@
 // counter2.cpp : Defines the entry point for the console application.
 // 实现计算器，+,- * / 小数
 
-#include "stdafx.h"
+//#include "stdafx.h"
 #define MAXSIZE 100
 #define END '\n'
 #include "stdio.h"
 #include "stdlib.h"
-#include "malloc.h" 
+#include "malloc.h"
 #include "math.h"
 
 char ops[MAXSIZE];   //运算符栈
@@ -28,6 +28,7 @@ int char_In(char c); //判断c是否为运算符
 double Operate(double a,char theta,double b); //对出栈的两个数计算
 double  EvaluateExpression( );//使用算符优先算法进行算术表示式求值
 //ops[]为运算符栈，ovs[]为操作数栈
+char input_h='\n';//定义全局变量，用于缓存输入【+】 
 
 int main(int argc, char* argv[]) {
 	printf("请输入算术表达式，以回车结束\n");
@@ -170,12 +171,16 @@ char Precede(char t1,char t2) { //判断t1与t2的优先级别
 int char_In(char c) { //判断c是否为运算符
 	switch(c) {
 		case '+':
-		case '-':
 		case '*':
 		case '/':
 		case '(':
 		case ')':
 		case END:
+			return 1;
+		case '-':
+			if(char_In(input_h)||input_h=='\n') {//用于检测上一个输入是否为操作符【+】 
+				push_ovs(0);
+			}
 			return 1;
 		default :
 			return 0;
@@ -215,6 +220,7 @@ double EvaluateExpression( ) {
 	stack_x=gettop_ops();
 	while(input_c!=END||stack_x!=END) { //判断计算是否结束
 		if (char_In(input_c)) { //若输入的字符是7种运算符之一
+			input_h=input_c;//缓存上一个输入【+】 
 			switch (Precede(stack_x,input_c)) {
 				case '<':
 					push_ops(input_c); //若栈顶(x)优先级<输入则输入进栈
@@ -233,6 +239,7 @@ double EvaluateExpression( ) {
 			}
 
 		} else if(input_c>='0'&&input_c<='9') { //input_c是操作数
+			input_h=input_c;//缓存上一个输入【+】 
 			input_c=input_c-'0';
 			push_ovs(input_c);
 			input_c=getchar();
