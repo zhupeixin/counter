@@ -210,9 +210,9 @@ double Operate(double a,char theta,double b) { //对出栈的两个数计算
 double EvaluateExpression( ) {
 //使用算符优先算法进行算术表示式求值
 //ops[]为运算符栈，ovs[]为操作数栈
-
-	double a,b,temp1,temp2,temp3;
-	char stack_x,theta,input_c;
+	int cache_Len=0,i,j,flag=0,temp1=0,temp2,temp3;
+	double a,b,curnum;
+	char stack_x,theta,input_c,buff[MAXSIZE];
 	inistack_ops();  //初始化运算符栈
 	push_ops(END);   //使结束符进栈
 	inistack_ovs(); //初始化操作数栈
@@ -220,7 +220,15 @@ double EvaluateExpression( ) {
 	stack_x=gettop_ops();
 	while(input_c!=END||stack_x!=END) { //判断计算是否结束
 		if (char_In(input_c)) { //若输入的字符是7种运算符之一
-			input_h=input_c;//缓存上一个输入【+】 
+			input_h=input_c;//缓存上一个输入【+】
+			for(i=0;i<flag;i++){
+				buff[i]='\0';
+			}
+			flag=0;//标志回滚 
+			if(temp1){
+				push_ovs(curnum);
+			}
+			temp1=0;
 			switch (Precede(stack_x,input_c)) {
 				case '<':
 					push_ops(input_c); //若栈顶(x)优先级<输入则输入进栈
@@ -240,8 +248,11 @@ double EvaluateExpression( ) {
 
 		} else if(input_c>='0'&&input_c<='9') { //input_c是操作数
 			input_h=input_c;//缓存上一个输入【+】 
-			input_c=input_c-'0';
-			push_ovs(input_c);
+//			input_c=input_c-'0';
+			flag++;
+			temp1++;
+				buff[flag-1]=input_c;
+			curnum=(double)atof(buff);	
 			input_c=getchar();
 		} else {
 			printf("非法字符\n");
