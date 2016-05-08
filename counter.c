@@ -64,7 +64,7 @@ void push_ovs(double x) { //操作数进栈
 char pop_ops() { //运算符出栈
 	char y;
 	if(ops_top==-1) {
-		printf("运算符栈空！下溢\n");
+		printf("输入有误\n");
 		exit(1);
 	} else {
 		y=ops[ops_top];
@@ -77,7 +77,7 @@ char pop_ops() { //运算符出栈
 double pop_ovs() { //操作数出栈
 	double y;
 	if(ovs_top==-1) {
-		printf("操作数栈空！下溢\n");
+		printf("输入有误\n");
 		exit(1);
 	} else {
 		y=ovs[ovs_top];
@@ -91,7 +91,7 @@ char gettop_ops() { //取出运算符栈顶元素
 	if (ops_top!=-1)
 		return ops[ops_top];
 	else {
-		printf("取数时运算符栈已空\n");
+		printf("输入有误\n");
 		exit(1);
 	}
 }
@@ -103,7 +103,7 @@ double gettop_ovs() { //取出操作数栈顶元素
 	if (ovs_top!=-1)
 		return ovs[ovs_top];
 	else {
-		printf("取数时操作数栈已空\n");
+		printf("输入有误\n");
 		exit(1);
 	}
 }
@@ -136,7 +136,7 @@ char Precede(char t1,char t2) { //判断t1与t2的优先级别
 			break;
 		case '(':
 			if (t1==')') {
-				printf("运算符error1\n");
+				printf("输入有误\n");
 				exit(1);
 			} else
 				f='<';
@@ -147,7 +147,7 @@ char Precede(char t1,char t2) { //判断t1与t2的优先级别
 					f='=';
 					break;
 				case END:
-					printf("运算符错误2\n");
+					printf("输入有误\n");
 					exit(1);
 				default:
 					f='>';
@@ -159,7 +159,7 @@ char Precede(char t1,char t2) { //判断t1与t2的优先级别
 					f='=';
 					break;
 				case '(':
-					printf("运算符错误3\n");
+					printf("输入有误\n");
 					exit(1);
 				default:
 					f='>';
@@ -170,12 +170,16 @@ char Precede(char t1,char t2) { //判断t1与t2的优先级别
 
 int char_In(char c) { //判断c是否为运算符
 	switch(c) {
-		case '+':
 		case '*':
 		case '/':
 		case '(':
 		case ')':
 		case END:
+			return 1;
+		case '+':
+			if((!temp2)&&(char_In(input_h)||input_h=='\n')) {//用于检测上一个输入是否为操作符【+】
+				push_ovs(0);//向操作数栈填入一个0参与负数运算【+】
+			}
 			return 1;
 		case '-':
 			if((!temp2)&&(char_In(input_h)||input_h=='\n')) {//用于检测上一个输入是否为操作符【+】
@@ -256,7 +260,7 @@ double EvaluateExpression( ) {
 			curnum=(double)atof(buff);//将字符串转换为小数 【+】
 			input_c=getchar();
 		} else {
-			printf("非法字符\n");
+			printf("输入有误\n");
 			exit(1);
 		}
 		stack_x=gettop_ops();
