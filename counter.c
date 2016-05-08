@@ -170,12 +170,6 @@ char Precede(char t1,char t2) { //判断t1与t2的优先级别
 
 int char_In(char c) { //判断c是否为运算符
 	switch(c) {
-		case '*':
-		case '/':
-		case '(':
-		case ')':
-		case END:
-			return 1;
 		case '+':
 			if((!temp2)&&(char_In(input_h)||input_h=='\n')) {//用于检测上一个输入是否为操作符【+】
 				push_ovs(0);//向操作数栈填入一个0参与负数运算【+】
@@ -185,6 +179,26 @@ int char_In(char c) { //判断c是否为运算符
 			if((!temp2)&&(char_In(input_h)||input_h=='\n')) {//用于检测上一个输入是否为操作符【+】
 				push_ovs(0);//向操作数栈填入一个0参与负数运算【+】
 			}
+			return 1;
+		case '(':
+			if((!temp2)){
+				if(input_h==')'||(input_h>='0'&&input_h<='9')||input_h=='.'){
+					printf("输入有误\n");
+					exit(0);
+				}				
+			} 
+			return 1;
+		case ')':
+			if((!temp2)){
+				if(!((input_h>='0'&&input_h<='9')||input_h==')')){
+					printf("输入有误\n");
+					exit(0);
+				}				
+			} 
+			return 1;
+		case '*':
+		case '/':
+		case END:
 			return 1;
 		default :
 			return 0;
