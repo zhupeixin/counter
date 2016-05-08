@@ -28,7 +28,8 @@ int char_In(char c); //判断c是否为运算符
 double Operate(double a,char theta,double b); //对出栈的两个数计算
 double  EvaluateExpression( );//使用算符优先算法进行算术表示式求值
 //ops[]为运算符栈，ovs[]为操作数栈
-char input_h='\n';//定义全局变量，用于缓存输入【+】
+char input_h='\n';//定义全局变量，用于缓存输入慢速【+】
+char input_p='\n';//定义全局变量，用于缓存输入【+】
 int temp2=0;//定义全局变量，用于判断是否在完全入栈前进行运算 【+】 
 int main(int argc, char* argv[]) {
 	printf("请输入算术表达式，以回车结束\n");
@@ -267,6 +268,10 @@ double EvaluateExpression( ) {
 			}
 
 		} else if((input_c>='0'&&input_c<='9')||input_c=='.') { //input_c是操作数
+			if(input_h==')'){//输入检查)右边不能为数字 
+				printf("输入有误\n");
+				exit(0);
+			}
 			input_h=input_c;//缓存上一个输入【+】
 //			input_c=input_c-'0';
 			flag++;//标志计数增加 【+】
