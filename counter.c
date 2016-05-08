@@ -29,7 +29,8 @@ double Operate(double a,char theta,double b); //对出栈的两个数计算
 double  EvaluateExpression( );//使用算符优先算法进行算术表示式求值
 //ops[]为运算符栈，ovs[]为操作数栈
 char input_h='\n';//定义全局变量，用于缓存输入【+】
-
+int temp2=0;//定义全局变量，用于判断是否在完全入栈前进行运算
+ 
 int main(int argc, char* argv[]) {
 	printf("请输入算术表达式，以回车结束\n");
 	printf("%f\n",EvaluateExpression( ));
@@ -178,8 +179,8 @@ int char_In(char c) { //判断c是否为运算符
 		case END:
 			return 1;
 		case '-':
-			if(char_In(input_h)||input_h=='\n') {//用于检测上一个输入是否为操作符【+】
-				push_ovs(0);//向操作数栈填入一个0参与负数运算【+】 
+			if((!temp2)&&(char_In(input_h)||input_h=='\n')) {//用于检测上一个输入是否为操作符【+】
+				push_ovs(0);
 			}
 			return 1;
 		default :
@@ -210,9 +211,9 @@ double Operate(double a,char theta,double b) { //对出栈的两个数计算
 double EvaluateExpression( ) {
 //使用算符优先算法进行算术表示式求值
 //ops[]为运算符栈，ovs[]为操作数栈
-	int cache_Len=0,i,j,flag=0;//flag用于计算连续输入数字个数 【+】 
-	double a,b,curnum;//curcum存储字符串转换成的小数 【+】 
-	char stack_x,theta,input_c,buff[MAXSIZE];//buff存储数字字符串 【+】 
+
+	double a,b;
+	char stack_x,theta,input_c;
 	inistack_ops();  //初始化运算符栈
 	push_ops(END);   //使结束符进栈
 	inistack_ovs(); //初始化操作数栈
@@ -221,23 +222,19 @@ double EvaluateExpression( ) {
 	while(input_c!=END||stack_x!=END) { //判断计算是否结束
 		if (char_In(input_c)) { //若输入的字符是7种运算符之一
 			input_h=input_c;//缓存上一个输入【+】
-			for(i=0; i<flag; i++) {//缓存字符串置空 【+】 
-				buff[i]='\0';
-			}
-			if(flag) {//将数字推向操作数栈 【+】 
-				push_ovs(curnum);
-			}
-			flag=0;//标志回滚【+】 
 			switch (Precede(stack_x,input_c)) {
 				case '<':
 					push_ops(input_c); //若栈顶(x)优先级<输入则输入进栈
 					input_c=getchar();
+					temp2=0; 
 					break;
 				case '=':
 					stack_x=pop_ops();//相等则出栈，即脱括号接受下一个字符
 					input_c=getchar();
+					temp2=0;
 					break;
 				case '>':
+					temp2++;
 					theta=pop_ops();
 					b=pop_ovs();
 					a=pop_ovs();
@@ -245,12 +242,10 @@ double EvaluateExpression( ) {
 					break;
 			}
 
-		} else if((input_c>='0'&&input_c<='9')||input_c=='.') { //input_c是操作数
+		} else if(input_c>='0'&&input_c<='9') { //input_c是操作数
 			input_h=input_c;//缓存上一个输入【+】
-//			input_c=input_c-'0';
-			flag++;//标志计数增加 【+】 
-			buff[flag-1]=input_c;//输入的字符暂时存储到buff缓存字符串中 【+】 
-			curnum=(double)atof(buff);//将字符串转换为小数 【+】 
+			input_c=input_c-'0';
+			push_ovs(input_c);
 			input_c=getchar();
 		} else {
 			printf("非法字符\n");
